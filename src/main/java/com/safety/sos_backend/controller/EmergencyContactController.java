@@ -10,31 +10,37 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/contacts")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")   // allow Expo / APK access
 public class EmergencyContactController {
 
     @Autowired
-    private EmergencyContactRepository repo;
+    private EmergencyContactRepository repository;
 
-    // GET  /api/contacts
+    // GET → List all contacts
     @GetMapping
     public List<EmergencyContact> getAllContacts() {
-        return repo.findAll();
+        return repository.findAll();
     }
 
-    // POST /api/contacts
+    // POST → Add new contact
     @PostMapping
-    public EmergencyContact addContact(@RequestBody EmergencyContact contact) {
-        return repo.save(contact);
+    public ResponseEntity<EmergencyContact> addContact(@RequestBody EmergencyContact contact) {
+        if (contact.getName() == null || contact.getPhoneNumber() == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        EmergencyContact saved = repository.save(contact);
+        return ResponseEntity.ok(saved);
     }
 
-    // DELETE /api/contacts/{id}
+    // DELETE → Remove a contact by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteContact(@PathVariable Long id) {
-        if (!repo.existsById(id)) {
+        if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        repo.deleteById(id);
+
+        repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

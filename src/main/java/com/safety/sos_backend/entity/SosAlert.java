@@ -18,4 +18,7 @@ public class SosAlert {
     private String contactNumber;
 
     private LocalDateTime timestamp = LocalDateTime.now();
+
+    // ✅ New field for storing Firebase audio/video link
+    private String mediaUrl;
 }
